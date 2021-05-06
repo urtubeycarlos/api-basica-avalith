@@ -7,6 +7,6 @@ const config = {
     database: 'university'
 }
 
-const connection = mySQL.createConnection(config);
+const connection = mySQL.createPool(config);
 
 module.exports = connection;
