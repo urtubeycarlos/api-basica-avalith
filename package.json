@@ -1,0 +1,20 @@
+{
+  "name": "api-basica-avalith",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urtubeycarlos/api-basica-avalith.git"
+  },
+  "author": "Carlos Urtubey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/urtubeycarlos/api-basica-avalith/issues"
+  },
+  "homepage": "https://github.com/urtubeycarlos/api-basica-avalith#readme"
+}
