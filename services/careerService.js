@@ -3,12 +3,12 @@ const careers = [
     {
         id: ++currentId,
         name: 'Licenciatura en Sistemas',
-        institue: 'Industria'
+        institute: 'Industria'
     },
     {
         id: ++currentId,
         name: 'Tecnicatura Universitaria en Informatica',
-        institue: 'Ciencias'
+        institute: 'Ciencias'
     }
 ]
 
@@ -25,12 +25,14 @@ const getCareer = (id) => {
     return ret;
 };
 
-const addCareer = (name, institue) => {
-    careers.push({
+const addCareer = (name, institute) => {
+    var toAdd = {
         id: ++currentId,
         name: name,
-        institue: institue
-    })
+        institute: institute
+    }
+    careers.push(toAdd);
+    return toAdd;
 };
 
 const removeCareer = (id) => {
@@ -39,7 +41,7 @@ const removeCareer = (id) => {
         if( career.id == id )
             toRemove = index;
     })
-    careers.splice(toRemove, 1);
+    return careers.splice(toRemove, 1);
 }
 
 module.exports = {
