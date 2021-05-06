@@ -7,7 +7,8 @@ const careers = [
     },
     {
         id: ++currentId,
-        name: 'Tecnicatura Universitaria en Informatica'
+        name: 'Tecnicatura Universitaria en Informatica',
+        institue: 'Ciencias'
     }
 ]
 
