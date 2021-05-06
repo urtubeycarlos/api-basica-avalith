@@ -7,7 +7,7 @@ const authMiddleware = require('./middlewares/auth')
 const port = process.env.PORT || 8080;
 const app = express();
 
-/* app.use(session({})); */
+app.use(session({ secret: 'somevalue' }));
 app.use(formidableMiddleware())
 
 const authRouter = require('./routes/auth');
