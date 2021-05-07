@@ -16,7 +16,7 @@ router.post('/login', (request, response) => {
             } else
                 response.status(400).json({status:400, logged:false});
         }
-    })
+    });
 });
 
 router.post('/logout', (request, response) => {
@@ -66,7 +66,7 @@ router.delete('/signdown', (request, response) => {
             else
                 response.status(200).json({status:200, signdown:false, msg:'user eliminated succesfully'});
         }
-    })
+    });
 });
 
 
