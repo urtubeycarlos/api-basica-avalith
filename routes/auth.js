@@ -9,7 +9,6 @@ router.post('/login', (req, res) => {
     return res.status(400).json({ status: 400, logged: false, msg: 'invalid body' });
   }
   return db.query('select * from user where email = ? and password = ?', [req.fields.email, md5(req.fields.password)], (error, result) => {
-    console.log(result);
     if (error) {
       return res.sendStatus(500);
     }
@@ -30,22 +29,22 @@ router.post('/signup', (req, res) => {
   if (!req.fields.email || !req.fields.password) {
     return res.status(400).json({ status: 400, signup: false, msg: 'invalid body' });
   }
-  db.query('insert into user (email, password) select ?, MD5(?) from dual where not exists ( select * from user where email = ? )', [req.fields.email, req.fields.password, req.fields.email], (error, result) => {
+  return db.query('insert into user (email, password) select ?, MD5(?) from dual where not exists ( select * from user where email = ? )', [req.fields.email, req.fields.password, req.fields.email], (error, result) => {
     if (error) {
       return res.sendStatus(500);
     }
     if (result.affectedRows === 0) {
       return res.status(400).json({ status: 400, signup: false, msg: 'user already exists' });
     }
+    return res.status(200).json({ status: 200, signup: true, msg: 'user added successfully' });
   });
-  return res.status(200).json({ status: 200, signup: true, msg: 'user added successfully' });
 });
 
 router.put('/changepassword', (req, res) => {
   if (!req.fields.email || !req.fields.password || !req.fields.newPassword) {
     return res.status(400).json({ status: 400, password_changed: false, msg: 'invalid body' });
   }
-  db.query('update user set password = MD5(?) where email = ? and password = MD5(?)', [req.fields.newPassword, req.fields.email, req.fields.password], (error, result) => {
+  return db.query('update user set password = MD5(?) where email = ? and password = MD5(?)', [req.fields.newPassword, req.fields.email, req.fields.password], (error, result) => {
     if (error) {
       return res.sendStatus(500);
     }
@@ -60,7 +59,7 @@ router.delete('/signdown', (req, res) => {
   if (!req.fields.email || !req.fields.password) {
     return res.status(400).json({ status: 400, signdown: false, msg: 'invalid body' });
   }
-  db.query('delete from user where email = ? and password = MD5(?)', [req.fields.email, req.fields.password], (error, result) => {
+  return db.query('delete from user where email = ? and password = MD5(?)', [req.fields.email, req.fields.password], (error, result) => {
     if (error) {
       return res.sendStatus(500);
     }
