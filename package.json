@@ -23,5 +23,10 @@
     "express-session": "^1.17.1",
     "md5": "^2.3.0",
     "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.25.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
   }
 }

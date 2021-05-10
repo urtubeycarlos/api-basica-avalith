@@ -1,9 +1,8 @@
-const db = require('./../db');
-const auth = (request, response, next) => {
-    if( request.session && request.session.user )
-        return next();
-    else
-        response.sendStatus(401);
-}
+const auth = (req, res, next) => {
+  if (req.session && req.session.user) {
+    return next();
+  }
+  return res.sendStatus(401);
+};
 
 module.exports = auth;
