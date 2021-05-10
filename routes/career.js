@@ -4,6 +4,7 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', (req, res) => {
+  console.log(req.body);
   db.query('select * from career', (error, results) => {
     if (error) {
       return res.sendStatus(500);
@@ -25,7 +26,7 @@ router.post('/', (req, res) => {
   if (!req.fields.name || !req.fields.institute) {
     return res.status(400).json({ status: 400, added: false, msg: 'invalid body' });
   }
-  db.query('insert into career (name, institute) select ?, ? from dual where not exists (select * from career where name = ?)', [req.fields.name, req.fields.institute, req.fields.name], (error, result) => {
+  return db.query('insert into career (name, institute) select ?, ? from dual where not exists (select * from career where name = ?)', [req.fields.name, req.fields.institute, req.fields.name], (error, result) => {
     if (error) {
       return res.sendStatus(500);
     }
@@ -52,15 +53,15 @@ router.put('/:id', (req, res) => {
   if (!req.fields.name || !req.fields.institute) {
     return res.sendStatus(400).json({ status: 400, added: false, msg: 'invalid body' });
   }
-  db.query('update user set name = ?, institute = ? where id = ?', [req.fields.name, req.fields.institute, req.fields.id], (error, result) => {
+  return db.query('update user set name = ?, institute = ? where id = ?', [req.fields.name, req.fields.institute, req.fields.id], (error, result) => {
     if (error) {
       return res.sendStatus(500);
     }
     if (result.affectedRows === 0) {
       return res.status(400).json({ status: 400, updated: false, msg: 'career not exists' });
     }
+    return res.status(200).json({ status: 200, updated: true, msg: 'career updated succesfully' });
   });
-  return res.status(200).json({ status: 200, updated: true, msg: 'career updated succesfully' });
 });
 
 module.exports = router;
