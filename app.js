@@ -9,6 +9,7 @@ const careerRouter = require('./routes/career');
 const port = process.env.PORT || 8080;
 const app = express();
 
+app.use(express.json());
 app.use(session({ secret: 'somevalue' }));
 app.use(formidableMiddleware());
 app.use('/', authRouter);
