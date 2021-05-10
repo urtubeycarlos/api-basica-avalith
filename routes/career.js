@@ -4,7 +4,6 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  console.log(req.body);
   db.query('select name, institute from career', (error, results) => {
     if (error) {
       return res.sendStatus(500);
@@ -53,7 +52,8 @@ router.delete('/:id', (req, res) => {
   if (!req.fields.name || !req.fields.institute) {
     return res.sendStatus(400).send({ status: 400, added: false, msg: 'invalid body' });
   }
-  return db.query('update career set name = ?, institute = ? where id = ?', [req.fields.name, req.fields.institute, req.fields.id], (error, result) => {
+  return db.query('update career set name = ?, institute = ? where id = ?',
+  [req.fields.name, req.fields.institute, req.fields.id], (error, result) => {
     if (error) {
       return res.sendStatus(500);
     }
