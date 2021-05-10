@@ -29,7 +29,7 @@ router.post('/signup', (req, res) => {
   if (!req.fields.email || !req.fields.password) {
     return res.status(400).send({ status: 400, signup: false, msg: 'invalid body' });
   }
-  return db.query('insert into user (email, password) values(?, ?)', [req.fields.email, md5(req.fields.password)], (error, result) => {
+  return db.query('insert into user (email, password) values(?, ?)', [req.fields.email, md5(req.fields.password)], (error) => {
     if (error) {
       if (error.code === 'ER_DUP_ENTRY') {
         return res.status(400).send({ status: 400, signup: false, msg: 'user already exists' });
