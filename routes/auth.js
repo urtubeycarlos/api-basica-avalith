@@ -8,7 +8,8 @@ router.post('/login', (req, res) => {
   if (!req.fields.email || !req.fields.password) {
     return res.status(400).json({ status: 400, logged: false, msg: 'invalid body' });
   }
-  return db.query('select * from user where email = ? and password = ?', [req.fields.email, req.fields.password], (error, result) => {
+  return db.query('select * from user where email = ? and password = ?', [req.fields.email, md5(req.fields.password)], (error, result) => {
+    console.log(result);
     if (error) {
       return res.sendStatus(500);
     }
