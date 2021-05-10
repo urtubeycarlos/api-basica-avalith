@@ -8,16 +8,16 @@ router.post('/login', (req, res) => {
   if (!req.fields.email || !req.fields.password) {
     return res.status(400).json({ status: 400, logged: false, msg: 'invalid body' });
   }
-  db.query('select * from user where email = ? and password = ?', [req.fields.email, req.fields.password], (error, result) => {
+  return db.query('select * from user where email = ? and password = ?', [req.fields.email, req.fields.password], (error, result) => {
     if (error) {
       return res.sendStatus(500);
     }
     if (result.length === 0) {
       return res.status(400).json({ status: 400, logged: false });
     }
+    req.session.user = req.fields.email;
+    return res.status(200).json({ status: 200, logged: true });
   });
-  req.session.user = req.fields.email;
-  return res.status(200).json({ status: 200, logged: true });
 });
 
 router.post('/logout', (req, res) => {
@@ -36,8 +36,8 @@ router.post('/signup', (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(400).json({ status: 400, signup: false, msg: 'user already exists' });
     }
-    return res.status(200).json({ status: 200, signup: true, msg: 'user added successfully' });
   });
+  return res.status(200).json({ status: 200, signup: true, msg: 'user added successfully' });
 });
 
 router.put('/changepassword', (req, res) => {
