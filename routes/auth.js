@@ -1,29 +1,39 @@
 const express = require('express');
 const md5 = require('md5');
+const jwt = require('jsonwebtoken');
 const db = require('../db');
+const jwtConfig = require('../config').auth;
 
 const router = express.Router();
 
 router.post('/login', (req, res) => {
   if (!req.body.email || !req.body.password) {
-    return res.status(400).send({ status: 400, logged: false, msg: 'invalid body' });
+    return res.sendStatus(400);
   }
-  return db.query('select email, password, active from user where email = ? and password = ? and active <> 0', [req.body.email, md5(req.body.password)], (error, result) => {
+  return db.query('select id, email from user where email = ? and password = ? and active <> 0', [req.body.email, md5(req.body.password)], (error, result) => {
     if (error) {
       return res.sendStatus(500);
     }
     if (result.length === 0) {
-      return res.status(400).send({ status: 400, logged: false, msg: 'invalid email or password' });
+      return res.status(401).send({ logged: false, msg: 'invalid email or password' });
     }
-    req.session.user = req.body.email;
-    return res.status(200).send({ status: 200, logged: true, msg: 'logged succesfully' });
+    const options = {
+      algorithm: jwtConfig.algorithm,
+      expiresIn: jwtConfig.expire,
+    };
+    return jwt.sign(result, jwtConfig.privateKey, options, (encodeError, encoded) => {
+      if (encodeError) {
+        return res.sendStatus(401);
+      }
+      return res.status(202).send({ logged: true, msg: 'logged succesfully', token: encoded });
+    });
   });
 });
 
-router.post('/logout', (req, res) => {
+/* router.post('/logout', (req, res) => {
   req.session.destroy();
   return res.status(200).send({ status: 200, logged: false });
-});
+}); */
 
 router.post('/signup', (req, res) => {
   if (!req.body.email || !req.body.password) {

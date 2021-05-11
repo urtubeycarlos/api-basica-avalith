@@ -1,8 +1,18 @@
+const jwt = require('jsonwebtoken');
+const jwtConfig = require('../config').auth;
+
 const auth = (req, res, next) => {
-  if (req.session && req.session.user) {
-    return next();
+  const token = req.headers.Authorization;
+  if (token) {
+    return jwt.verify(token, jwtConfig.privateKey, (error, decoded) => {
+      if (error) {
+        return res.sendStatus(401);
+      }
+      req.decoded = decoded;
+      return next();
+    });
   }
-  return res.sendStatus(401);
+  return res.sendStatus(400);
 };
 
 module.exports = auth;
