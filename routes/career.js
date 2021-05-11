@@ -22,10 +22,10 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  if (!req.fields.name || !req.fields.institute) {
+  if (!req.body.name || !req.body.institute) {
     return res.status(400).send({ status: 400, added: false, msg: 'invalid body' });
   }
-  return db.query('insert into career (name, institute) values(?, ?)', [req.fields.name, req.fields.institute], (error) => {
+  return db.query('insert into career (name, institute) values(?, ?)', [req.body.name, req.body.institute], (error) => {
     if (error) {
       if (error.code === 'ER_DUP_ENTRY') {
         return res.status(400).send({ status: 400, added: false, msg: 'career already exists' });
@@ -49,11 +49,11 @@ router.delete('/:id', (req, res) => {
 });
 
 /* router.put('/:id', (req, res) => {
-  if (!req.fields.name || !req.fields.institute) {
+  if (!req.body.name || !req.body.institute) {
     return res.sendStatus(400).send({ status: 400, added: false, msg: 'invalid body' });
   }
   return db.query('update career set name = ?, institute = ? where id = ?',
-  [req.fields.name, req.fields.institute, req.fields.id], (error, result) => {
+  [req.body.name, req.body.institute, req.body.id], (error, result) => {
     if (error) {
       return res.sendStatus(500);
     }
