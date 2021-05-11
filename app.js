@@ -9,7 +9,6 @@ const app = express();
 app.use(express.json());
 app.use('/', authRouter);
 app.use('/career', authMiddleware, careerRouter);
-app.use('/career', careerRouter);
 
 app.listen(port, () => {
   console.log(`Server listening in port: http://localhost:${port}/`);
