@@ -7,7 +7,7 @@ const config = {
   },
   auth: {
     expire: '1h',
-    algorithm: 'ES256', // HS256
+    algorithm: 'HS256', // HS256
     privateKey: 'U-V&Qw;4,d^jbjN',
     passphrase: 'pu(HHND/E-mK//2',
   },

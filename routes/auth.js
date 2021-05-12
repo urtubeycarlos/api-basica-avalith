@@ -26,7 +26,7 @@ router.post('/login', (req, res) => {
       expiresIn: jwtConfig.expire,
     };
     const payload = JSON.parse(JSON.stringify(result[0]));
-    return jwt.sign(payload, keys, options, (encodeError, encoded) => {
+    return jwt.sign(payload, jwtConfig.privateKey, options, (encodeError, encoded) => {
       if (encodeError) {
         console.log(encodeError);
         return res.sendStatus(401);
