@@ -17,12 +17,18 @@ router.post('/login', (req, res) => {
     if (result.length === 0) {
       return res.status(401).send({ logged: false, msg: 'invalid email or password' });
     }
+    const keys = {
+      key: jwtConfig.privateKey,
+      passphrase: jwtConfig.passphrase,
+    };
     const options = {
       algorithm: jwtConfig.algorithm,
       expiresIn: jwtConfig.expire,
     };
-    return jwt.sign(result, jwtConfig.privateKey, options, (encodeError, encoded) => {
+    const payload = JSON.parse(JSON.stringify(result[0]));
+    return jwt.sign(payload, keys, options, (encodeError, encoded) => {
       if (encodeError) {
+        console.log(encodeError);
         return res.sendStatus(401);
       }
       return res.status(202).send({ logged: true, msg: 'logged succesfully', token: encoded });

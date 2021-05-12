@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const jwtConfig = require('../config').auth;
 
 const auth = (req, res, next) => {
-  const token = req.headers.Authorization;
+  const token = req.headers.authorization;
   if (token) {
     return jwt.verify(token, jwtConfig.privateKey, (error, decoded) => {
       if (error) {
