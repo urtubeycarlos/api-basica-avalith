@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const md5 = require('md5');
 const db = require('../db');
 const jwtConfig = require('../config').auth;
 
@@ -15,7 +16,7 @@ function getAll() {
 
 function get({ email, password }) {
   return new Promise((resolve, reject) => {
-    db.query('select id, email from user where emai = ? and password = ? and active <> 0', [email, password], (error, result) => {
+    db.query('select id, email from user where emai = ? and password = ? and active <> 0', [email, md5(password)], (error, result) => {
       if (error) {
         reject(error);
       }
@@ -26,7 +27,7 @@ function get({ email, password }) {
 
 function insert({ email, password }) {
   return new Promise((resolve, reject) => {
-    db.query('insert into user values (?, ?)', [email, password], (error, result) => {
+    db.query('insert into user values (?, ?)', [email, md5(password)], (error, result) => {
       if (error) {
         reject(error);
       }
@@ -37,7 +38,7 @@ function insert({ email, password }) {
 
 function update({ newPassword, email, password }) {
   return new Promise((resolve, reject) => {
-    db.query('update user set password = ?, active = 1 where email = ? and password = ?', [newPassword, email, password], (error, result) => {
+    db.query('update user set password = ?, active = 1 where email = ? and password = ?', [md5(newPassword), email, md5(password)], (error, result) => {
       if (error) {
         reject(error);
       }
@@ -48,7 +49,7 @@ function update({ newPassword, email, password }) {
 
 function remove({ email, password }) {
   return new Promise((resolve, reject) => {
-    db.query('update user set active = 0 where email = ? and password = ?', [email, password], (error, result) => {
+    db.query('update user set active = 0 where email = ? and password = ?', [email, md5(password)], (error, result) => {
       if (error) {
         reject(error);
       }
