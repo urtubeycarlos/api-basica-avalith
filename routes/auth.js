@@ -1,39 +1,26 @@
 const express = require('express');
-const md5 = require('md5');
-const jwt = require('jsonwebtoken');
-const db = require('../db');
-const jwtConfig = require('../config').auth;
+const userService = require('../services/userService');
 
 const router = express.Router();
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   if (!req.body.email || !req.body.password) {
     return res.sendStatus(400);
   }
-  return db.query('select id, email from user where email = ? and password = ? and active <> 0', [req.body.email, md5(req.body.password)], (error, result) => {
-    if (error) {
-      return res.sendStatus(500);
+  try {
+    const user = await userService.get(req.body);
+    if (!user) {
+      return res.status(403).send({ logged: false, msg: 'invalid email or password' });
     }
-    if (result.length === 0) {
-      return res.status(401).send({ logged: false, msg: 'invalid email or password' });
+    try {
+      const encodedToken = await userService.createToken(user);
+      return res.status(202).send({ logged: true, msg: 'logged succesfully', token: encodedToken });
+    } catch (error) {
+      return res.sendStatus(403);
     }
-    const keys = {
-      key: jwtConfig.privateKey,
-      passphrase: jwtConfig.passphrase,
-    };
-    const options = {
-      algorithm: jwtConfig.algorithm,
-      expiresIn: jwtConfig.expire,
-    };
-    const payload = JSON.parse(JSON.stringify(result[0]));
-    return jwt.sign(payload, jwtConfig.privateKey, options, (encodeError, encoded) => {
-      if (encodeError) {
-        console.log(encodeError);
-        return res.sendStatus(401);
-      }
-      return res.status(202).send({ logged: true, msg: 'logged succesfully', token: encoded });
-    });
-  });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
 });
 
 /* router.post('/logout', (req, res) => {
@@ -41,49 +28,55 @@ router.post('/login', (req, res) => {
   return res.status(200).send({ status: 200, logged: false });
 }); */
 
-router.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
   if (!req.body.email || !req.body.password) {
-    return res.status(400).send({ status: 400, signup: false, msg: 'invalid body' });
+    return res.sendStatus(400);
   }
-  return db.query('insert into user (email, password) values(?, ?)', [req.body.email, md5(req.body.password)], (error) => {
-    if (error) {
-      if (error.code === 'ER_DUP_ENTRY') {
-        return res.status(400).send({ status: 400, signup: false, msg: 'user already exists' });
+  try {
+    await userService.insert(req.body);
+    return res.status(200).send({ signup: true, msg: 'user added successfully' });
+  } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') {
+      try {
+        req.body.newPassword = req.body.password;
+        await userService.update(req.body);
+        return res.status(200).send({ signup: true, msg: 'user actived successfully' });
+      } catch {
+        return res.sendStatus(500);
       }
-      return res.sendStatus(500);
     }
-    return res.status(200).send({ status: 200, signup: true, msg: 'user added successfully' });
-  });
+    return res.sendStatus(500);
+  }
 });
 
-router.put('/changepassword', (req, res) => {
+router.put('/changepassword', async (req, res) => {
   if (!req.body.email || !req.body.password || !req.body.newPassword) {
-    return res.status(400).send({ status: 400, password_changed: false, msg: 'invalid body' });
+    return res.status(400);
   }
-  return db.query('update user set password = ? where email = ? and password = ?', [md5(req.body.newPassword), req.body.email, md5(req.body.password)], (error, result) => {
-    if (error) {
-      return res.sendStatus(500);
-    }
+  try {
+    const result = await userService.update(req.body);
     if (result.affectedRows === 0) {
-      return res.status(400).send({ status: 400, password_changed: false, msg: 'invalidad email or password' });
+      return res.status(400).send({ password_changed: false, msg: 'invalidad email or password' });
     }
-    return res.status(200).send({ status: 200, password_changed: true, msg: 'password changed' });
-  });
+    return res.status(200).send({ password_changed: true, msg: 'password changed' });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
 });
 
-router.delete('/signdown', (req, res) => {
+router.delete('/signdown', async (req, res) => {
   if (!req.body.email || !req.body.password) {
-    return res.status(400).send({ status: 400, signdown: false, msg: 'invalid body' });
+    return res.status(400);
   }
-  return db.query('update user set active = 0 where email = ? and password = ?', [req.body.email, md5(req.body.password)], (error, result) => {
-    if (error) {
-      return res.sendStatus(500);
-    }
+  try {
+    const result = await userService.remove(req.body);
     if (result.affectedRows === 0) {
-      return res.status(400).send({ status: 400, signdown: false, msg: 'invalid email or password' });
+      return res.status(400).send({ signdown: false, msg: 'invalid email or password' });
     }
     return res.status(200).send({ status: 200, signdown: false, msg: 'user eliminated succesfully' });
-  });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
 });
 
 module.exports = router;

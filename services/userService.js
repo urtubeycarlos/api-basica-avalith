@@ -16,11 +16,11 @@ function getAll() {
 
 function get({ email, password }) {
   return new Promise((resolve, reject) => {
-    db.query('select id, email from user where emai = ? and password = ? and active <> 0', [email, md5(password)], (error, result) => {
+    db.query('select id, email from user where email = ? and password = ? and active <> 0', [email, md5(password)], (error, result) => {
       if (error) {
         reject(error);
       }
-      resolve(result);
+      resolve(result[0]);
     });
   });
 }
