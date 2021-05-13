@@ -4,7 +4,7 @@ const jwtConfig = require('../config').auth;
 
 function getAll() {
   return new Promise((resolve, reject) => {
-    db.query('select id, email, password, active from user', (error, result) => {
+    db.query('select id, email, active from user', (error, result) => {
       if (error) {
         reject(error);
       }
