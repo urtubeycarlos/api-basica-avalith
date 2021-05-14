@@ -34,7 +34,7 @@ function insert({ name, institute }) {
     throw error;
   }
   return new Promise((resolve, reject) => {
-    db.query('', (error, result) => {
+    db.query('insert into career (name, institute) values (?, ?)', [name, institute], (error, result) => {
       if (error) {
         reject(error);
       }
