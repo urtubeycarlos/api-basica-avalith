@@ -20,14 +20,14 @@ describe('Testing career Service', () => {
   ];
 
   beforeEach(async () => {
-    await fakeCareers.forEach(async (career) => {
+    fakeCareers.forEach(async (career) => {
       await careerService.insert(career);
     });
   });
 
   afterEach(async () => {
     const dbContent = await careerService.getAll();
-    await dbContent.forEach(async (career) => {
+    dbContent.forEach(async (career) => {
       await careerService.remove(career.id);
     });
   });
@@ -35,8 +35,6 @@ describe('Testing career Service', () => {
   describe('main methods', () => {
     it('getAll', async () => {
       const result = await careerService.getAll();
-      console.log(result);
-      console.log(result.length);
       assert.equal(result.length, 3);
     });
     it('get', async () => {
