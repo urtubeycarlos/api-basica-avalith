@@ -2,7 +2,6 @@ const { describe, it, beforeEach } = require('mocha');
 const { assert } = require('chai');
 const { createToken } = require('../../services/userService');
 const authMiddleware = require('../../middlewares/auth');
-require('dotenv').config();
 
 function sleep(milliseconds) {
   const start = new Date().getTime();
