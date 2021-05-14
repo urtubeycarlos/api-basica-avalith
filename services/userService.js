@@ -7,9 +7,9 @@ function getAll() {
   return new Promise((resolve, reject) => {
     db.query('select id, email, active from user', (error, result) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
-      resolve(result);
+      return resolve(result);
     });
   });
 }
@@ -18,9 +18,9 @@ function get({ email, password }) {
   return new Promise((resolve, reject) => {
     db.query('select id, email from user where email = ? and password = ? and active <> 0', [email, md5(password)], (error, result) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
-      resolve(result[0]);
+      return resolve(result[0]);
     });
   });
 }
@@ -29,9 +29,9 @@ function insert({ email, password }) {
   return new Promise((resolve, reject) => {
     db.query('insert into user values (?, ?)', [email, md5(password)], (error, result) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
-      resolve(result);
+      return resolve(result);
     });
   });
 }
@@ -40,9 +40,9 @@ function update({ newPassword, email, password }) {
   return new Promise((resolve, reject) => {
     db.query('update user set password = ?, active = 1 where email = ? and password = ?', [md5(newPassword), email, md5(password)], (error, result) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
-      resolve(result);
+      return resolve(result);
     });
   });
 }
@@ -51,9 +51,9 @@ function remove({ email, password }) {
   return new Promise((resolve, reject) => {
     db.query('update user set active = 0 where email = ? and password = ?', [email, md5(password)], (error, result) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
-      resolve(result);
+      return resolve(result);
     });
   });
 }
@@ -67,9 +67,9 @@ function createToken(user) {
   return new Promise((resolve, reject) => {
     jwt.sign(payload, jwtConfig.privateKey, options, (encodeError, encoded) => {
       if (encodeError) {
-        reject(encodeError);
+        return reject(encodeError);
       }
-      resolve(encoded);
+      return resolve(encoded);
     });
   });
 }

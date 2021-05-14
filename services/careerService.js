@@ -4,9 +4,9 @@ function getAll() {
   return new Promise((resolve, reject) => {
     db.query('select id, name, institute from career', (error, result) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
-      resolve(result);
+      return resolve(result);
     });
   });
 }
@@ -20,9 +20,9 @@ function get(id) {
   return new Promise((resolve, reject) => {
     db.query('select id, name, institute from career where id = ?', [id], (error, result) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
-      resolve(result[0]);
+      return resolve(result[0]);
     });
   });
 }
@@ -36,9 +36,9 @@ function insert({ name, institute }) {
   return new Promise((resolve, reject) => {
     db.query('insert into career (name, institute) values (?, ?)', [name, institute], (error, result) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
-      resolve(result);
+      return resolve(result);
     });
   });
 }
@@ -52,9 +52,9 @@ function remove(id) {
   return new Promise((resolve, reject) => {
     db.query('delete from career where id = ?', id, (error, result) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
-      resolve(result);
+      return resolve(result);
     });
   });
 }
