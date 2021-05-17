@@ -85,4 +85,71 @@ describe.only('Testing userService', () => {
       await userService.update(toRestore);
     });
   });
+
+  describe('border cases', () => {
+    describe('getAll', () => {
+      it('empty result', async () => {
+        for (let i = 0; i < fakeUsers.length; i += 1) {
+          const user = fakeUsers[i];
+          await userService.remove(user);
+        }
+        const result = await userService.getAll();
+        assert.strictEqual(result.length, 0);
+      });
+    });
+
+    describe('get', () => {
+      it('undefined or null param', async () => {
+        try {
+          await userService.get(null);
+        } catch (error) {
+          assert.isTrue(error instanceof TypeError);
+        }
+      });
+
+      it('undefined or null values', async () => {
+        try {
+          await userService.get({ email: null, password: undefined });
+        } catch (error) {
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
+        }
+      });
+
+      it('user not exists', async () => {
+        const inexistentUser = {
+          email: 'erik@coldmail.com',
+          password: '5678',
+        };
+        const result = await userService.get(inexistentUser);
+        assert.deepEqual(result, {});
+      });
+    });
+
+    describe('remove', () => {
+
+    });
+
+    describe('insert', () => {
+      it('re activate user', async () => {
+        await userService.remove(fakeUsers[0]);
+        let dbContent = await userService.getAll();
+        assert.strictEqual(dbContent.length, 2);
+        await userService.insert(fakeUsers[0]);
+        dbContent = await userService.getAll();
+        assert.strictEqual(dbContent.length, 3);
+      });
+    });
+
+    describe('update', () => {
+      it('user not exists', async () => {
+        const inexistentUser = {
+          email: 'erik@coldmail.com',
+          password: '5678',
+          newPassword: 'abcde',
+        };
+        const result = await userService.update(inexistentUser);
+        assert.strictEqual(result.affectedRows, 0);
+      });
+    });
+  });
 });
