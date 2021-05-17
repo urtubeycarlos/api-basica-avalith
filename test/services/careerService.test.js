@@ -19,21 +19,23 @@ describe('Testing career Service', () => {
     },
   ];
 
-  beforeEach(() => {
-    fakeCareers.forEach(async (career) => {
+  beforeEach(async () => {
+    for (let i = 0; i < fakeCareers.length; i += 1) {
+      const career = fakeCareers[i];
       await careerService.insert(career);
-    });
+    }
   });
 
   afterEach(async () => {
     const dbContent = await careerService.getAll();
-    dbContent.forEach(async (career) => {
+    for (let i = 0; i < dbContent.length; i += 1) {
+      const career = dbContent[i];
       await careerService.remove(career.id);
-    });
+    }
   });
 
   describe('main methods', () => {
-    it.only('getAll', async () => {
+    it('getAll', async () => {
       const result = await careerService.getAll();
       assert.equal(result.length, 3);
     });
