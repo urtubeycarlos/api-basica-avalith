@@ -19,7 +19,7 @@ describe('Testing career Service', () => {
     },
   ];
 
-  beforeEach(async () => {
+  beforeEach(() => {
     fakeCareers.forEach(async (career) => {
       await careerService.insert(career);
     });
@@ -33,7 +33,7 @@ describe('Testing career Service', () => {
   });
 
   describe('main methods', () => {
-    it('getAll', async () => {
+    it.only('getAll', async () => {
       const result = await careerService.getAll();
       assert.equal(result.length, 3);
     });
