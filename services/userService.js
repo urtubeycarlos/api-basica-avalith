@@ -18,18 +18,7 @@ function checkParameters(...params) {
 
 function getAll() {
   return new Promise((resolve, reject) => {
-    db.query('select id, email, active from user where active <> 0', (error, result) => {
-      if (error) {
-        return reject(error);
-      }
-      return resolve(result);
-    });
-  });
-}
-
-function getAllWithInactive() {
-  return new Promise((resolve, reject) => {
-    db.query('select id, email, active from user', (error, result) => {
+    db.query('select id, email, password from user where active <> 0', (error, result) => {
       if (error) {
         return reject(error);
       }
@@ -41,7 +30,7 @@ function getAllWithInactive() {
 function get({ email, password }) {
   checkParameters(email, password);
   return new Promise((resolve, reject) => {
-    db.query('select id, email from user where email = ? and password = ? and active <> 0', [email, md5(password)], (error, result) => {
+    db.query('select id, email, password from user where email = ? and password = ? and active <> 0', [email, md5(password)], (error, result) => {
       if (error) {
         return reject(error);
       }
@@ -65,7 +54,7 @@ function update({ newPassword, email, password }) {
 function insert({ email, password }) {
   checkParameters(email, password);
   return new Promise((resolve, reject) => {
-    db.query('insert into user values (?, ?)', [email, md5(password)], (error, result) => {
+    db.query('insert into user (email, password) values (?, ?)', [email, md5(password)], (error, result) => {
       if (error) {
         if (error.code === 'ER_DUP_ENTRY') {
           return resolve(update({ newPassword: password, email, password }));
@@ -112,7 +101,6 @@ function createToken(user) {
 
 module.exports = {
   getAll,
-  getAllWithInactive,
   get,
   insert,
   update,
