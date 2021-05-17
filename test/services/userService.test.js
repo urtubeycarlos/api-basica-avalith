@@ -46,6 +46,12 @@ describe.only('Testing userService', () => {
       assert.strictEqual(result.password, md5(fakeUsers[0].password));
     });
 
+    it('remove', async () => {
+      await userService.remove(fakeUsers[0]);
+      const result = await userService.getAll();
+      assert.strictEqual(result.length, 2);
+    });
+
     it('insert', async () => {
       const newUser = {
         email: 'jane.doe@outlook.com',
@@ -77,12 +83,6 @@ describe.only('Testing userService', () => {
         newPassword: fakeUsers[0].password,
       };
       await userService.update(toRestore);
-    });
-
-    it('remove', async () => {
-      await userService.remove(fakeUsers[0]);
-      const result = await userService.getAll();
-      assert.strictEqual(result.length, 2);
     });
   });
 });
