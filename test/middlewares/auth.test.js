@@ -4,12 +4,9 @@ const { createToken } = require('../../services/userService');
 const authMiddleware = require('../../middlewares/auth');
 
 function sleep(milliseconds) {
-  const start = new Date().getTime();
-  for (let i = 0; i < 1e7; i += 1) {
-    if ((new Date().getTime() - start) > milliseconds) {
-      break;
-    }
-  }
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), milliseconds);
+  });
 }
 
 describe('Testing auth middleware', () => {
@@ -23,11 +20,12 @@ describe('Testing auth middleware', () => {
   };
   const next = () => 'next!';
 
+  const fakeUser = {
+    email: 'johndoe@gmail.com',
+    password: '1234',
+  };
+
   beforeEach(async () => {
-    const fakeUser = {
-      email: 'johndoe@gmail.com',
-      password: '1234',
-    };
     req.headers.authorization = await createToken(fakeUser);
   });
 
@@ -45,9 +43,9 @@ describe('Testing auth middleware', () => {
     assert.equal(authMiddleware(req, res, next), 'next!');
   });
 
-  it('expired token', () => {
+  it('expired token', async () => {
     assert.equal(authMiddleware(req, res, next), 'next!');
-    sleep(1000);
+    await sleep(1000);
     assert.equal(authMiddleware(req, res, next), 401);
   });
 });
