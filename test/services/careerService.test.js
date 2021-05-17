@@ -39,11 +39,13 @@ describe('Testing career Service', () => {
       const result = await careerService.getAll();
       assert.strictEqual(result.length, 3);
     });
+
     it('get', async () => {
       const dbContent = await careerService.getAll();
       const result = await careerService.get(dbContent[0].id);
       assert.deepEqual(result, dbContent[0]);
     });
+
     it('insert', async () => {
       const newCareer = {
         name: 'Profesorado de Matematicas',
@@ -53,6 +55,7 @@ describe('Testing career Service', () => {
       const result = await careerService.getAll();
       assert.strictEqual(result.length, 4);
     });
+
     it('remove', async () => {
       const dbContent = await careerService.getAll();
       await careerService.remove(dbContent[0].id);
@@ -60,6 +63,7 @@ describe('Testing career Service', () => {
       assert.strictEqual(result.length, 2);
     });
   });
+
   describe('border cases', () => {
     describe('getAll', () => {
       it('empty result', async () => {
@@ -72,6 +76,7 @@ describe('Testing career Service', () => {
         assert.strictEqual(result.length, 0);
       });
     });
+
     describe('get', () => {
       it('null id', async () => {
         try {
@@ -80,6 +85,7 @@ describe('Testing career Service', () => {
           assert.strictEqual(error.code, 'ER_NOT_ID');
         }
       });
+
       it('undefined id', async () => {
         try {
           await careerService.get(undefined);
@@ -87,6 +93,7 @@ describe('Testing career Service', () => {
           assert.strictEqual(error.code, 'ER_NOT_ID');
         }
       });
+
       it('career not exists', async () => {
         const dbContent = await careerService.getAll();
         const nextId = dbContent[2].id + 1;
@@ -94,6 +101,7 @@ describe('Testing career Service', () => {
         assert.deepEqual(inexistent, {});
       });
     });
+
     describe('insert', () => {
       it('empty', async () => {
         try {
@@ -102,6 +110,7 @@ describe('Testing career Service', () => {
           assert.strictEqual(error.code, 'ER_NOT_FIELD');
         }
       });
+
       it('null', async () => {
         try {
           await careerService.insert(null);
@@ -109,6 +118,7 @@ describe('Testing career Service', () => {
           assert.isTrue(error instanceof TypeError);
         }
       });
+
       it('undefined', async () => {
         try {
           await careerService.insert(undefined);
@@ -116,6 +126,7 @@ describe('Testing career Service', () => {
           assert.isTrue(error instanceof TypeError);
         }
       });
+
       it('null values', async () => {
         try {
           await careerService.insert({ name: null, institute: null });
@@ -123,6 +134,7 @@ describe('Testing career Service', () => {
           assert.strictEqual(error.code, 'ER_NOT_FIELD');
         }
       });
+
       it('undefined values', async () => {
         try {
           await careerService.insert({ name: undefined, institute: undefined });
@@ -130,6 +142,7 @@ describe('Testing career Service', () => {
           assert.strictEqual(error.code, 'ER_NOT_FIELD');
         }
       });
+
       it('duplicated entry', async () => {
         try {
           await careerService.insert(fakeCareers[0]);
@@ -138,6 +151,7 @@ describe('Testing career Service', () => {
         }
       });
     });
+
     describe('remove', () => {
       it('career not exists', async () => {
         const dbContent = await careerService.getAll();
@@ -145,6 +159,7 @@ describe('Testing career Service', () => {
         const resultOfInexistent = await careerService.remove(nextId);
         assert.strictEqual(resultOfInexistent.affectedRows, 0);
       });
+
       it('not id', async () => {
         try {
           await careerService.remove(null);
