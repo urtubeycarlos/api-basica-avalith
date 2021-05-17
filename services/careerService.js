@@ -30,7 +30,7 @@ function get(id) {
 function insert({ name, institute }) {
   if (!name || !institute) {
     const error = new Error(`Invalid parameters. name = ${name}, institute = ${institute}`);
-    error.code = 'ER_NOT_FIELD';
+    error.code = 'ER_NOT_PARAM';
     throw error;
   }
   return new Promise((resolve, reject) => {

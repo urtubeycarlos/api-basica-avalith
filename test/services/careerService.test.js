@@ -107,7 +107,7 @@ describe('Testing career Service', () => {
         try {
           await careerService.insert({});
         } catch (error) {
-          assert.strictEqual(error.code, 'ER_NOT_FIELD');
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
         }
       });
 
@@ -131,7 +131,7 @@ describe('Testing career Service', () => {
         try {
           await careerService.insert({ name: null, institute: null });
         } catch (error) {
-          assert.strictEqual(error.code, 'ER_NOT_FIELD');
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
         }
       });
 
@@ -139,7 +139,7 @@ describe('Testing career Service', () => {
         try {
           await careerService.insert({ name: undefined, institute: undefined });
         } catch (error) {
-          assert.strictEqual(error.code, 'ER_NOT_FIELD');
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
         }
       });
 
