@@ -3,7 +3,7 @@ const { beforeEach, afterEach } = require('mocha');
 const { assert } = require('chai');
 const careerService = require('../../services/careerService');
 
-describe('Testing career Service', () => {
+describe('Testing careerService', () => {
   const fakeCareers = [
     {
       name: 'Licenciatura en Sistemas',
