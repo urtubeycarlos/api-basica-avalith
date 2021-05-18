@@ -1,5 +1,7 @@
-const { describe, it, beforeEach } = require('mocha');
+const { describe, it } = require('mocha');
+const { beforeEach, afterEach } = require('mocha');
 const { assert } = require('chai');
+const sinon = require('sinon');
 const { createToken } = require('../../services/userService');
 const authMiddleware = require('../../middlewares/auth');
 
@@ -9,16 +11,16 @@ function sleep(milliseconds) {
   });
 }
 
-describe('Testing auth middleware', () => {
+describe.only('Testing auth middleware', () => {
   const req = {
     headers: {
       authorization: '',
     },
   };
   const res = {
-    sendStatus: (httpError) => httpError,
+    sendStatus: sinon.spy(),
   };
-  const next = () => 'next!';
+  const next = sinon.spy();
 
   const fakeUser = {
     email: 'johndoe@gmail.com',
@@ -29,23 +31,33 @@ describe('Testing auth middleware', () => {
     req.headers.authorization = await createToken(fakeUser);
   });
 
+  afterEach(() => {
+    res.sendStatus.resetHistory();
+    next.resetHistory();
+  });
+
   it('null token', () => {
     req.headers.authorization = null;
-    assert.equal(authMiddleware(req, res, next), 400);
+    authMiddleware(req, res, next);
+    assert.isTrue(res.sendStatus.calledOnceWith(400));
   });
 
   it('invalid token', () => {
     req.headers.authorization = 'fsafsalkj';
-    assert.equal(authMiddleware(req, res, next), 401);
+    authMiddleware(req, res, next);
+    assert.isTrue(res.sendStatus.calledOnceWith(401));
   });
 
   it('valid token', () => {
-    assert.equal(authMiddleware(req, res, next), 'next!');
+    authMiddleware(req, res, next);
+    assert.isTrue(next.calledOnce);
   });
 
   it('expired token', async () => {
-    assert.equal(authMiddleware(req, res, next), 'next!');
+    authMiddleware(req, res, next);
+    assert.isTrue(next.calledOnce);
     await sleep(1000);
-    assert.equal(authMiddleware(req, res, next), 401);
+    authMiddleware(req, res, next);
+    assert.isTrue(res.sendStatus.calledOnceWith(401));
   });
 });
