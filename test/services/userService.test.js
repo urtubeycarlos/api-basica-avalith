@@ -4,7 +4,7 @@ const { assert } = require('chai');
 const md5 = require('md5');
 const userService = require('../../services/userService');
 
-describe.only('Testing userService', () => {
+describe('Testing userService', () => {
   const fakeUsers = [
     {
       email: 'urtubeycarlos.0510@gmail.com',
@@ -115,6 +115,14 @@ describe.only('Testing userService', () => {
         }
       });
 
+      it('empty param', async () => {
+        try {
+          await userService.get({});
+        } catch (error) {
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
+        }
+      });
+
       it('user not exists', async () => {
         const inexistentUser = {
           email: 'erik@coldmail.com',
@@ -126,10 +134,65 @@ describe.only('Testing userService', () => {
     });
 
     describe('remove', () => {
+      it('undefined or null param', async () => {
+        try {
+          await userService.remove(null);
+        } catch (error) {
+          assert.isTrue(error instanceof TypeError);
+        }
+      });
 
+      it('undefined or null values', async () => {
+        try {
+          await userService.remove({ email: null, password: null });
+        } catch (error) {
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
+        }
+      });
+
+      it('empty param', async () => {
+        try {
+          await userService.remove({});
+        } catch (error) {
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
+        }
+      });
+
+      it('user no exists', async () => {
+        const inexistentUser = {
+          email: 'erik@coldmail.com',
+          password: '5678',
+        };
+        const result = await userService.remove(inexistentUser);
+        assert.strictEqual(result.affectedRows, 0);
+      });
     });
 
     describe('insert', () => {
+      it('undefined or null param', async () => {
+        try {
+          await userService.insert(null);
+        } catch (error) {
+          assert.isTrue(error instanceof TypeError);
+        }
+      });
+
+      it('undefined or null values', async () => {
+        try {
+          await userService.insert({ email: null, password: null });
+        } catch (error) {
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
+        }
+      });
+
+      it('empty param', async () => {
+        try {
+          await userService.insert({});
+        } catch (error) {
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
+        }
+      });
+
       it('re activate user', async () => {
         await userService.remove(fakeUsers[0]);
         let dbContent = await userService.getAll();
@@ -141,6 +204,30 @@ describe.only('Testing userService', () => {
     });
 
     describe('update', () => {
+      it('undefined or null param', async () => {
+        try {
+          await userService.update(null);
+        } catch (error) {
+          assert.isTrue(error instanceof TypeError);
+        }
+      });
+
+      it('undefined or null values', async () => {
+        try {
+          await userService.update({ email: null, password: null, newPassword: null });
+        } catch (error) {
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
+        }
+      });
+
+      it('empty param', async () => {
+        try {
+          await userService.update({});
+        } catch (error) {
+          assert.strictEqual(error.code, 'ER_NOT_PARAM');
+        }
+      });
+
       it('user not exists', async () => {
         const inexistentUser = {
           email: 'erik@coldmail.com',
