@@ -158,12 +158,21 @@ describe('Testing userService', () => {
         }
       });
 
-      it('user no exists', async () => {
+      it('inexistent user', async () => {
         const inexistentUser = {
           email: 'erik@coldmail.com',
           password: '5678',
         };
         const result = await userService.remove(inexistentUser);
+        assert.strictEqual(result.affectedRows, 0);
+      });
+
+      it('invalid mail or password', async () => {
+        const incorrect = {
+          email: fakeUsers[0].email,
+          password: fakeUsers[1].password,
+        };
+        const result = await userService.remove(incorrect);
         assert.strictEqual(result.affectedRows, 0);
       });
     });
@@ -201,6 +210,11 @@ describe('Testing userService', () => {
         dbContent = await userService.getAll();
         assert.strictEqual(dbContent.length, 3);
       });
+
+      it('insert duplicate', async () => {
+        const result = await userService.insert(fakeUsers[0]);
+        assert.strictEqual(result.changedRows, 0);
+      });
     });
 
     describe('update', () => {
@@ -236,6 +250,16 @@ describe('Testing userService', () => {
         };
         const result = await userService.update(inexistentUser);
         assert.strictEqual(result.affectedRows, 0);
+      });
+
+      it('no values to update', async () => {
+        const toNotUpdate = {
+          newPassword: fakeUsers[0].password,
+          email: fakeUsers[0].email,
+          password: fakeUsers[0].password,
+        };
+        const result = await userService.update(toNotUpdate);
+        assert.strictEqual(result.changedRows, 0);
       });
     });
   });
